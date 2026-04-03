@@ -139,7 +139,7 @@ const allSections = document.querySelectorAll('.section');
 
 const revealSection = function (entries, observer) {
   const [entry] = entries;
-  console.log(entry);
+
   if (!entry.isIntersecting) return;
 
   entry.target.classList.remove('section--hidden');
@@ -166,6 +166,7 @@ const loadImg = function (entries, observer) {
   }
   //Replace src with data-src
   entry.target.src = entry.target.dataset.src;
+
   entry.target.addEventListener('load', function () {
     entry.target.classList.remove('lazy-img');
   });
@@ -176,10 +177,54 @@ const loadImg = function (entries, observer) {
 const imgObserver = new IntersectionObserver(loadImg, {
   root: null,
   threshold: 0,
-  rootMargin: 200,
+  rootMargin: '200px',
 });
 
 imgTargets.forEach(img => imgObserver.observe(img));
+
+// //////..............Implementing the slider functionality
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+const slider = document.querySelector('.slider');
+
+let curSlide = 0;
+const maxSlide = slides.length;
+
+const goToSlide = function (slide) {
+  slides.forEach(
+    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+  );
+};
+goToSlide(0);
+//Next Slide
+const nextSlide = function () {
+  if (curSlide === maxSlide - 1) {
+    curSlide = 0;
+  } else {
+    curSlide++;
+  }
+  goToSlide(curSlide);
+};
+
+const prevSlide = function () {
+  if (curSlide === 0) {
+    curSlide = maxSlide - 1;
+  } else {
+    curSlide--;
+  }
+  goToSlide(curSlide);
+};
+
+btnRight.addEventListener('click', nextSlide);
+btnLeft.addEventListener('click', prevSlide);
+
+//catering for the keyboard keys
+document.addEventListener('keydown', function (e) {
+  e.key === 'ArrowLeft' && prevSlide();
+  e.key === 'ArrowRight' && nextSlide();
+});
+
 //////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
